@@ -165,7 +165,8 @@ export function exampleUserData(now: Date): UserData {
     }
   }
 
-  const completions = build();
+  const titles = new Map<string, string>([...doneTasks, ...habits].map((i) => [i.id, i.title]));
+  const completions = build().map((c) => ({ ...c, title: titles.get(c.refId) }));
   const points = totalPoints(completions, today);
 
   return {

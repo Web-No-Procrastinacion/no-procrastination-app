@@ -116,6 +116,33 @@ describe("Edición compartida", () => {
     expect(user().tasks[2]).toEqual(fixture().tasks[2]);
   });
 
+  it("en 'Completadas en días anteriores' no se edita nada, ni tareas ni hábitos", async () => {
+    await open("today");
+    for (const id of ["prev-ct", "prev-ch"]) {
+      const row = document.getElementById(`${id}-title`)?.closest("li") ?? missing();
+      expect(within(row).queryByRole("button")).not.toBeInTheDocument();
+      expect(within(row).getByRole("checkbox")).toBeDisabled();
+      expect(within(row).getByText("Este día ya cerró")).toBeInTheDocument();
+      fireEvent.click(document.getElementById(`${id}-title`) ?? missing());
+      expect(screen.queryByRole("dialog")).not.toBeInTheDocument();
+    }
+  });
+
+  it("renombrar un hábito hoy no cambia cómo se ve en los días cerrados", async () => {
+    await open("today");
+    fireEvent.click(screen.getAllByRole("checkbox", { name: "Estudiar" })[0] ?? missing());
+    fireEvent.click(screen.getByText("Avanzar al día siguiente"));
+    fireEvent.click(screen.getByText("Vista hábitos"));
+    fireEvent.click(screen.getAllByRole("button", { name: "Estudiar" })[0] ?? missing());
+    title("Estudiar con calma"); save(); await closed();
+    fireEvent.click(screen.getByText("Vista Hoy"));
+    const marked = user().completions.find(c => c.refId === "on" && c.localDay === today) ?? missing();
+    expect(marked.title).toBe("Estudiar");
+    expect(document.getElementById(`prev-${marked.id}-title`)).toHaveTextContent("Estudiar");
+    expect(document.getElementById(`prev-${marked.id}-title`)).not.toHaveTextContent("calma");
+    expect(screen.getAllByRole("button", { name: "Estudiar con calma" })[0]).toBeVisible();
+  });
+
   it("tocar la casilla no abre la edición y el lápiz sí", async () => {
     await open(); fireEvent.click(screen.getByRole("checkbox", { name: "Leer" }));
     expect(screen.queryByRole("dialog")).not.toBeInTheDocument();

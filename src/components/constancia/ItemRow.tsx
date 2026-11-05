@@ -25,7 +25,8 @@ export function ItemRow({
   editItem?: { kind: "task" | "habit"; id: string };
 }) {
   const { openEdit } = useApp();
-  const canEdit = !!editItem && (editItem.kind === "habit" || !closedNote);
+  // Lo de un día cerrado no se edita, sea tarea o hábito (CA-G8). Los hábitos se editan desde sus filas de hoy.
+  const canEdit = !!editItem && !closedNote;
   const edit = () => { if (editItem && canEdit) openEdit(editItem.kind, editItem.id); };
   return (
     <li className={cn("card-surface flex items-center gap-3 px-4 py-3", disabled && "bg-muted/60 shadow-none")}>

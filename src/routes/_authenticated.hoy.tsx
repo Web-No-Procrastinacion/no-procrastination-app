@@ -250,8 +250,7 @@ function Hoy() {
                 <ItemRow
                   key={c.id}
                   id={`prev-${c.id}`}
-                  title={titleOf(c.kind, c.refId)}
-                  editItem={{ kind: c.kind, id: c.refId }}
+                  title={c.title ?? titleOf(c.kind, c.refId)}
                   meta={`${c.kind === "habit" ? "Hábito" : "Tarea"} · ${formatDayShort(c.localDay)}`}
                   checked
                   disabled

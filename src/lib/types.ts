@@ -38,6 +38,8 @@ export interface Completion {
   localDay: string;
   /** Fecha y hora en UTC. */
   atUTC: string;
+  /** Título al marcar; el historial de días cerrados lo muestra aunque luego se renombre. */
+  title?: string | undefined;
 }
 
 export interface UserData {
