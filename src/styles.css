@@ -5,12 +5,14 @@
 @custom-variant dark (&:is(.dark *));
 
 /*
- * AKTIVA — sistema de diseño. Colores semánticos en oklch.
+ * AKTIVA — sistema de diseño "nido cálido" (tomado de Pasito A Pasito):
+ * papel crema, verde salvia y durazno. Colores semánticos en oklch.
+ * Los nombres de tokens se conservan para no tocar los componentes.
  */
 
 @theme inline {
   --font-sans: "Inter", ui-sans-serif, system-ui, sans-serif;
-  --font-display: "Inter", ui-sans-serif, system-ui, sans-serif;
+  --font-display: "Nunito", "Inter", ui-sans-serif, system-ui, sans-serif;
 
   --radius-sm: calc(var(--radius) - 6px);
   --radius-md: calc(var(--radius) - 4px);
@@ -133,75 +135,98 @@
 }
 
 :root {
-  --radius: .5rem;
-  --brand-1: oklch(0.9069087 0.0632308 196.09220);
-  --brand-2: oklch(0.9778582 0.0320292 196.63965);
-  --brand-3: oklch(0.8750832 0.0502041 205.73087);
-  --brand-4: oklch(0.8206188 0.0945282 236.75359);
-  --brand-5: oklch(0.8562331 0.0489401 219.65429);
-  --brand-dark: oklch(0.2619140 0.0424699 240.27630);
-  --brand-navy: oklch(0.3382643 0.0529151 239.66104);
-  --background: oklch(0.9792000 0.0066668 233.63896);
-  --card: oklch(1.0000000 0.0000000 89.87556);
-  --icon-accent: oklch(0.5876172 0.1388683 241.96605);
-  --teal-accent: oklch(0.5765220 0.0984113 194.76895);
-  --logo-arrow: oklch(0.5463940 0.1313300 242.68346);
-  --primary-hover: oklch(0.7535129 0.1389889 232.66148);
-  --progress-end: oklch(0.6846872 0.1478686 237.32252);
-  --muted: oklch(0.9682603 0.0068536 247.89557);
-  --input: oklch(0.9287613 0.0126187 255.50785);
-  --field: oklch(0.9841519 0.0034127 247.85754);
-  --disabled-text: oklch(0.5543910 0.0407170 257.41661);
-  --success: oklch(0.5081271 0.1049386 165.61208);
-  --success-soft: oklch(0.9793189 0.0206797 166.11285);
-  --success-border: oklch(0.9049407 0.0894877 164.15008);
-  --destructive: oklch(0.4545683 0.1712836 13.69679);
-  --destructive-soft: oklch(0.9694101 0.0151680 12.42188);
-  --error-border: oklch(0.8924470 0.0559104 10.00080);
-  --foreground: var(--brand-dark);
-  --card-foreground: var(--brand-dark);
+  --radius: 12px;
+
+  /* Paleta base "nido cálido" (Pasito A Pasito) */
+  --cream: oklch(0.98 0.007 80.7); /* #FBF8F3 */
+  --ink: oklch(0.29 0.016 290.4); /* #2B2A33 */
+  --ink-soft: oklch(0.526 0.025 294.1); /* #6B6878 */
+  --sage: oklch(0.528 0.078 177.7); /* #2F7A6B */
+  --sage-dark: oklch(0.42 0.07 177.7);
+  --sage-soft: oklch(0.947 0.016 177.1); /* #E3F1ED */
+  --apricot: oklch(0.785 0.129 63.9); /* #F2A65A */
+  --apricot-soft: oklch(0.955 0.035 70);
+  --apricot-border: oklch(0.88 0.055 70);
+  --streak: oklch(0.718 0.147 56.4); /* #E8893B */
+  --streak-soft: oklch(0.955 0.035 62);
+  --shell: oklch(0.932 0.044 85.2); /* #F6E7C8 */
+  --shell-spot: oklch(0.846 0.068 82.2); /* #E3C99A */
+  --sand: oklch(0.915 0.015 80.7); /* #E8E2D8 */
+
+  /* Nombres heredados de AKTIVA, remapeados a la paleta cálida */
+  --brand-1: var(--sage-soft);
+  --brand-2: var(--apricot-soft);
+  --brand-3: var(--sand);
+  --brand-4: var(--sage);
+  --brand-5: var(--shell-spot);
+  --brand-dark: var(--ink);
+  --brand-navy: var(--ink-soft);
+  --background: var(--cream);
+  --card: oklch(1 0 0);
+  --icon-accent: var(--sage);
+  --teal-accent: var(--sage);
+  --logo-arrow: var(--apricot);
+  --primary-hover: oklch(0.47 0.075 177.7);
+  --progress-end: oklch(0.62 0.085 170);
+  --muted: oklch(0.951 0.013 82.4);
+  --input: var(--sand);
+  --field: oklch(0.993 0.004 80.7);
+  --disabled-text: oklch(0.5 0.02 290);
+  --success: oklch(0.48 0.1 152.8);
+  --success-soft: oklch(0.965 0.03 150);
+  --success-border: oklch(0.88 0.06 150);
+  --destructive: oklch(0.549 0.148 27.1); /* #B8473F */
+  --destructive-soft: oklch(0.965 0.02 27);
+  --error-border: oklch(0.87 0.06 27);
+  --foreground: var(--ink);
+  --card-foreground: var(--ink);
   --popover: var(--card);
-  --popover-foreground: var(--brand-dark);
-  --primary: var(--brand-4);
-  --primary-foreground: var(--brand-dark);
-  --primary-soft: var(--brand-2);
-  --secondary: var(--brand-1);
-  --secondary-foreground: var(--brand-dark);
-  --muted-foreground: var(--brand-navy);
-  --accent: var(--brand-2);
-  --accent-foreground: var(--brand-dark);
-  --warm: var(--success-soft);
-  --warm-foreground: var(--success);
-  --warm-soft: var(--brand-2);
-  --destructive-foreground: var(--card);
-  --border: var(--brand-3);
-  --avatar-shell: var(--brand-2);
-  --avatar-shell-shade: var(--brand-5);
-  --avatar-body: var(--brand-4);
-  --avatar-belly: var(--brand-1);
-  --avatar-beak: var(--logo-arrow);
-  --avatar-ink: var(--brand-dark);
-  --avatar-silhouette: var(--brand-3);
-  --chart-1: var(--brand-4);
-  --chart-2: var(--brand-1);
-  --chart-3: var(--icon-accent);
-  --chart-4: var(--brand-5);
-  --chart-5: var(--teal-accent);
-  --sidebar: var(--card);
-  --sidebar-foreground: var(--brand-dark);
-  --sidebar-primary: var(--brand-4);
-  --sidebar-primary-foreground: var(--brand-dark);
-  --sidebar-accent: var(--brand-2);
-  --sidebar-accent-foreground: var(--brand-dark);
-  --sidebar-border: var(--brand-3);
-  --sidebar-ring: var(--brand-4);
-  --ring: color-mix(in oklab, var(--brand-4) 55%, transparent);
-  --overlay: color-mix(in oklab, var(--brand-dark) 50%, transparent);
-  --shadow-soft: 0 2px 6px color-mix(in oklab, var(--brand-dark) 3%, transparent), 0 8px 24px color-mix(in oklab, var(--brand-dark) 5%, transparent);
-  --shadow-lift: 0 12px 32px color-mix(in oklab, var(--brand-dark) 12%, transparent);
-  --gradient-brand: linear-gradient(135deg, var(--brand-4), var(--brand-1));
-  --gradient-glass: linear-gradient(135deg, var(--brand-2), var(--card));
-  --gradient-progress: linear-gradient(90deg, var(--brand-4), var(--progress-end));
+  --popover-foreground: var(--ink);
+  --primary: var(--sage);
+  --primary-foreground: oklch(1 0 0);
+  --primary-soft: var(--sage-soft);
+  --secondary: var(--sage-soft);
+  --secondary-foreground: var(--sage-dark);
+  --muted-foreground: var(--ink-soft);
+  --accent: var(--apricot-soft);
+  --accent-foreground: var(--ink);
+  --warm: var(--streak-soft);
+  --warm-foreground: oklch(0.48 0.12 50);
+  --warm-soft: var(--apricot-soft);
+  --destructive-foreground: oklch(1 0 0);
+  --border: var(--sand);
+  --avatar-shell: var(--shell);
+  --avatar-shell-shade: var(--shell-spot);
+  --avatar-body: var(--apricot);
+  --avatar-belly: var(--apricot-soft);
+  --avatar-beak: var(--streak);
+  --avatar-ink: var(--ink);
+  --avatar-silhouette: oklch(0.88 0.015 80.7);
+  --chart-1: var(--sage);
+  --chart-2: var(--apricot);
+  --chart-3: oklch(0.583 0.112 152.8);
+  --chart-4: var(--streak);
+  --chart-5: var(--shell-spot);
+  --sidebar: oklch(0.97 0.009 80.7);
+  --sidebar-foreground: var(--ink);
+  --sidebar-primary: var(--sage);
+  --sidebar-primary-foreground: oklch(1 0 0);
+  --sidebar-accent: var(--sage-soft);
+  --sidebar-accent-foreground: var(--sage-dark);
+  --sidebar-border: var(--sand);
+  --sidebar-ring: var(--sage);
+  --ring: var(--sage);
+  --overlay: color-mix(in oklab, var(--ink) 45%, transparent);
+  --shadow-soft: 0 2px 8px oklch(0.29 0.016 290.4 / 0.06);
+  --shadow-lift: 0 8px 24px -6px oklch(0.29 0.016 290.4 / 0.1);
+  --gradient-brand: linear-gradient(135deg, var(--sage-soft), var(--apricot-soft));
+  --gradient-glass: linear-gradient(135deg, var(--sage-soft) 0%, oklch(1 0 0) 55%, var(--apricot-soft) 100%);
+  --gradient-progress: linear-gradient(90deg, var(--sage), var(--progress-end));
+  --gradient-morning: radial-gradient(
+    120% 80% at 50% 0%,
+    oklch(0.955 0.035 70 / 0.9) 0%,
+    oklch(0.98 0.007 80.7 / 0) 60%
+  );
 }
 
 @layer base {
@@ -215,6 +240,9 @@
 
   body {
     background-color: var(--color-background);
+    background-image: var(--gradient-morning);
+    background-repeat: no-repeat;
+    background-size: 100% 420px;
     color: var(--color-foreground);
     font-family: var(--font-sans);
     font-size: 1rem;
@@ -258,17 +286,16 @@
 
 @utility summary-surface {
   background: var(--gradient-glass);
-  backdrop-filter: blur(12px);
   border-radius: var(--radius-2xl);
-  border: 1px solid var(--brand-3);
+  border: 1px solid var(--color-border);
   box-shadow: var(--shadow-soft);
 }
 
 @utility progress-fill { background: var(--gradient-progress); }
 @utility logo-surface { background: var(--gradient-brand); }
-@utility glass-header { background: color-mix(in oklab, var(--card) 75%, transparent); backdrop-filter: blur(16px); }
-@utility icon-tile { background: var(--brand-2); color: var(--icon-accent); border-radius: var(--radius-xl); }
-@utility info-surface { background: var(--brand-2); color: var(--brand-dark); border: 1px solid var(--brand-3); }
+@utility glass-header { background: color-mix(in oklab, var(--cream) 85%, transparent); backdrop-filter: blur(16px); }
+@utility icon-tile { background: var(--sage-soft); color: var(--sage); border-radius: var(--radius-xl); }
+@utility info-surface { background: var(--apricot-soft); color: var(--ink); border: 1px solid var(--apricot-border); }
 @utility success-surface { background: var(--success-soft); color: var(--success); border: 1px solid var(--success-border); }
 
 @utility tap-target {
