@@ -1,7 +1,22 @@
 import { describe, expect, it } from "vitest";
 import { isHabitScheduled } from "./engine";
-import { revisedHabitSchedule } from "./habit-schedule";
+import { habitFrequencyLabel, revisedHabitSchedule } from "./habit-schedule";
 import type { Habit } from "./types";
+
+describe("Texto de la frecuencia", () => {
+  it.each([
+    [{ frequency: "daily", days: [] }, "Todos los días"],
+    [{ frequency: "specific", days: [0, 1, 2, 3, 4, 5, 6] }, "Todos los días"],
+    [{ frequency: "specific", days: [4, 2, 0, 1, 3] }, "De lunes a viernes"],
+    [{ frequency: "specific", days: [6, 5] }, "Fines de semana"],
+    [{ frequency: "specific", days: [1] }, "Los martes"],
+    [{ frequency: "specific", days: [5] }, "Los sábados"],
+    [{ frequency: "specific", days: [1, 3] }, "Mar y jue"],
+    [{ frequency: "specific", days: [4, 0, 2] }, "Lun, mié y vie"],
+  ] as const)("%o → %s", (habit, label) => {
+    expect(habitFrequencyLabel({ frequency: habit.frequency, days: [...habit.days] })).toBe(label);
+  });
+});
 
 describe("Vigencia de la frecuencia", () => {
   it("aplica desde mañana en cambio de año y conserva el día original", () => {

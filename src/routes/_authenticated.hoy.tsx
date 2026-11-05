@@ -8,7 +8,7 @@ import { gamification } from "@/config/gamification";
 import { useApp } from "@/lib/app-store";
 import { addDays, formatDayLong, formatDayShort } from "@/lib/dates";
 import { habitCompletion, isHabitScheduled, taskCompletion } from "@/lib/engine";
-import { habitScheduleOn } from "@/lib/habit-schedule";
+import { habitFrequencyLabel, habitScheduleOn } from "@/lib/habit-schedule";
 import { Button } from "@/components/ui/button";
 
 export const Route = createFileRoute("/_authenticated/hoy")({
@@ -179,7 +179,12 @@ function Hoy() {
               id={`habit-${h.id}`}
               title={h.title}
               editItem={{ kind: "habit", id: h.id }}
-              meta={habitScheduleOn(h, today).frequency === "daily" ? "Diario" : "Hoy está programado"}
+              meta={
+                <span className="inline-flex items-center gap-1.5">
+                  <Repeat className="h-3.5 w-3.5 shrink-0" aria-hidden />
+                  {habitFrequencyLabel(habitScheduleOn(h, today))}
+                </span>
+              }
               checked={false}
               onToggle={() => toggleHabit(h.id)}
             />
