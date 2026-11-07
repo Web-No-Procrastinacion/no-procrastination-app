@@ -6,6 +6,7 @@ import { EmptyState } from "@/components/constancia/AppChrome";
 import { ItemRow } from "@/components/constancia/ItemRow";
 import { BottomSheet, HabitForm, TaskForm } from "@/components/constancia/Forms";
 import { GoalProgressView, actionsLabel } from "@/components/constancia/GoalProgress";
+import { GoalTitle } from "@/components/constancia/GoalTitle";
 import { useApp } from "@/lib/app-store";
 import { formatDayMedium } from "@/lib/dates";
 import { goalProgress, habitCompletion, habitCompletionCount, isHabitScheduled, taskCompletion } from "@/lib/engine";
@@ -67,7 +68,7 @@ function GoalDetail() {
             </span>
           )}
         </div>
-        <h1 className="break-words font-display text-[28px] font-extrabold leading-tight tracking-normal">{goal.title}</h1>
+        <GoalTitle key={goal.id} goal={goal} />
         <div className="mt-5 [&_[role=progressbar]]:mt-3 [&_[role=progressbar]]:h-3 [&_p]:text-base sm:[&_p]:text-2xl">
           <GoalProgressView p={p} large />
         </div>

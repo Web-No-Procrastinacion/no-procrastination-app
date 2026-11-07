@@ -1,5 +1,5 @@
 import { useState, type ComponentType } from "react";
-import { cleanup, fireEvent, render, screen, waitFor } from "@testing-library/react";
+import { cleanup, fireEvent, render, screen, waitFor, within } from "@testing-library/react";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { AppProvider, useApp } from "@/lib/app-store";
 import { loadUser, saveUser, setSession } from "@/lib/storage";
@@ -173,6 +173,74 @@ describe("Acciones desde el detalle del objetivo", () => {
     await waitFor(() => expect(stats()).toMatchObject({ streak: 2, todayCount: 0 }));
     expect(box("Leer")).toBeDisabled();
     expect(box("Estudiar")).not.toBeChecked();
+  });
+
+  describe("Cambiar el nombre del objetivo", () => {
+    const savedGoal = () => loadUser(email)?.goals[0];
+    const nameField = () => screen.getByRole("textbox", { name: "Nombre del objetivo" });
+    const tapName = (name = "Preparar el parcial") =>
+      fireEvent.click(within(screen.getByRole("heading", { level: 1, name })).getByRole("button"));
+    const submit = () => fireEvent.submit(nameField().closest("form") ?? document.body);
+
+    it("se cambia tocando el nombre, sin lápiz, y solo cambia el nombre", async () => {
+      await open();
+      const summary = screen.getByRole("region", { name: "Avance" });
+      expect(within(summary).queryByRole("button", { name: /editar|lápiz|cambiar/i })).not.toBeInTheDocument();
+      tapName();
+      expect(nameField()).toHaveValue("Preparar el parcial");
+      expect(nameField()).toHaveFocus();
+      fireEvent.change(nameField(), { target: { value: "  Aprobar el parcial  " } });
+      submit();
+      expect(await screen.findByRole("heading", { level: 1, name: "Aprobar el parcial" })).toBeVisible();
+      const before = fixture();
+      const after = loadUser(email);
+      expect(savedGoal()).toEqual({ ...before.goals[0], title: "Aprobar el parcial" });
+      expect(after?.tasks).toEqual(before.tasks);
+      expect(after?.habits).toEqual(before.habits);
+      expect(after?.completions).toEqual(before.completions);
+      expect(stats()).toMatchObject({ points: 2 });
+    });
+
+    it("tocar fuera guarda y Escape deja el nombre como estaba", async () => {
+      await open();
+      tapName();
+      fireEvent.change(nameField(), { target: { value: "Nombre descartado" } });
+      fireEvent.keyDown(nameField(), { key: "Escape" });
+      expect(screen.getByRole("heading", { level: 1, name: "Preparar el parcial" })).toBeVisible();
+      expect(savedGoal()?.title).toBe("Preparar el parcial");
+      tapName();
+      fireEvent.change(nameField(), { target: { value: "Aprobar Física II" } });
+      fireEvent.blur(nameField());
+      expect(await screen.findByRole("heading", { level: 1, name: "Aprobar Física II" })).toBeVisible();
+      expect(savedGoal()?.title).toBe("Aprobar Física II");
+    });
+
+    it("no guarda un nombre vacío", async () => {
+      await open();
+      tapName();
+      fireEvent.change(nameField(), { target: { value: "   " } });
+      submit();
+      expect(nameField()).toHaveAttribute("aria-invalid", "true");
+      expect(screen.getByText("Escribe un nombre para el objetivo.")).toBeVisible();
+      expect(savedGoal()?.title).toBe("Preparar el parcial");
+      fireEvent.blur(nameField());
+      expect(screen.getByRole("heading", { level: 1, name: "Preparar el parcial" })).toBeVisible();
+      expect(loadUser(email)).toEqual(fixture());
+    });
+
+    it("si falla el guardado conserva lo escrito y permite reintentar", async () => {
+      await open();
+      fireEvent.click(screen.getByText("Simular fallo de guardado"));
+      tapName();
+      fireEvent.change(nameField(), { target: { value: "Aprobar el parcial" } });
+      submit();
+      expect(nameField()).toHaveValue("Aprobar el parcial");
+      expect(screen.getByRole("alert")).toBeVisible();
+      expect(savedGoal()?.title).toBe("Preparar el parcial");
+      fireEvent.click(screen.getByRole("button", { name: "Reintentar" }));
+      expect(await screen.findByRole("heading", { level: 1, name: "Aprobar el parcial" })).toBeVisible();
+      expect(savedGoal()?.title).toBe("Aprobar el parcial");
+    });
   });
 
   it("muestra solo el contador si el objetivo tiene únicamente hábitos", async () => {

@@ -70,6 +70,8 @@ interface AppState {
     onSuccess?: () => void,
   ) => boolean;
   addGoal: (input: { title: string; targetDate?: string }, onSuccess?: () => void) => boolean;
+  /** Cambia solo el nombre del objetivo; la fecha meta y lo asociado no se tocan. */
+  renameGoal: (id: string, title: string, onSuccess?: () => void) => boolean;
   associate: (kind: "task" | "habit", id: string, goalId: string) => boolean;
   updateProfile: (patch: Partial<Pick<UserData, "name" | "timezone">>) => boolean;
   markBonusSeen: (weeks: string[]) => void;
@@ -338,6 +340,21 @@ export function AppProvider({ children }: { children: ReactNode }) {
     [commit, now],
   );
 
+  const renameGoal: AppState["renameGoal"] = useCallback(
+    (id, title, onSuccess) => {
+      const next = title.trim();
+      if (!next) return false;
+      return commit(
+        (d) =>
+          d.goals.some((g) => g.id === id)
+            ? { ...d, goals: d.goals.map((g) => (g.id === id ? { ...g, title: next } : g)) }
+            : d,
+        onSuccess,
+      );
+    },
+    [commit],
+  );
+
   const associate: AppState["associate"] = useCallback(
     (kind, id, goalId) =>
       commit((d) =>
@@ -450,6 +467,7 @@ export function AppProvider({ children }: { children: ReactNode }) {
     addTask,
     addHabit,
     addGoal,
+    renameGoal,
     associate,
     updateProfile,
     markBonusSeen,
