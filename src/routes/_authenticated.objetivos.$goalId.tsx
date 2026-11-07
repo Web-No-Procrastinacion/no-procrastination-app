@@ -4,7 +4,7 @@ import { ArrowLeft, CalendarDays, CheckSquare, Link2, Plus, Repeat, Target } fro
 import { Button } from "@/components/ui/button";
 import { EmptyState } from "@/components/constancia/AppChrome";
 import { ItemRow } from "@/components/constancia/ItemRow";
-import { BottomSheet, TaskForm } from "@/components/constancia/Forms";
+import { BottomSheet, HabitForm, TaskForm } from "@/components/constancia/Forms";
 import { GoalProgressView, actionsLabel } from "@/components/constancia/GoalProgress";
 import { useApp } from "@/lib/app-store";
 import { formatDayMedium } from "@/lib/dates";
@@ -27,8 +27,9 @@ export const Route = createFileRoute("/_authenticated/objetivos/$goalId")({
 function GoalDetail() {
   const { goalId } = Route.useParams();
   const { data, stats, today, associate, toggleTask, toggleHabit, plusOneKey } = useApp();
-  const [sheet, setSheet] = useState<"closed" | "associate" | "task">("closed");
+  const [sheet, setSheet] = useState<"closed" | "associate" | "task" | "habit">("closed");
   const taskRef = useRef<HTMLInputElement>(null);
+  const habitRef = useRef<HTMLInputElement>(null);
   const initialPlusOneKey = useRef(plusOneKey);
   if (!data) return null;
 
@@ -90,11 +91,14 @@ function GoalDetail() {
       </section>
 
       <div className="mt-5 grid grid-cols-1 gap-2 sm:grid-cols-2">
-        {!p.empty && <Button variant="outline" onClick={() => setSheet("associate")}>
+        {!p.empty && <Button variant="outline" className="sm:col-span-2" onClick={() => setSheet("associate")}>
           <Link2 aria-hidden /> Asociar tareas o hábitos
         </Button>}
         <Button variant="soft" onClick={() => setSheet("task")}>
           <Plus aria-hidden /> Crear tarea asociada
+        </Button>
+        <Button variant="soft" onClick={() => setSheet("habit")}>
+          <Plus aria-hidden /> Crear hábito asociado
         </Button>
       </div>
 
@@ -150,7 +154,7 @@ function GoalDetail() {
       >
         {freeTasks.length === 0 && freeHabits.length === 0 ? (
           <p className="text-muted-foreground">
-            No hay tareas ni hábitos sin objetivo. Puedes crear una tarea ya asociada.
+            No hay tareas ni hábitos sin objetivo. Puedes crear una tarea o un hábito ya asociado.
           </p>
         ) : (
           <ul className="space-y-2">
@@ -188,6 +192,16 @@ function GoalDetail() {
         focusRef={taskRef}
       >
         <TaskForm onDone={() => setSheet("closed")} fixedGoalId={goal.id} focusRef={taskRef} />
+      </BottomSheet>
+
+      <BottomSheet
+        open={sheet === "habit"}
+        onOpenChange={(o) => !o && setSheet("closed")}
+        title="Nuevo hábito asociado"
+        description={goal.title}
+        focusRef={habitRef}
+      >
+        <HabitForm onDone={() => setSheet("closed")} fixedGoalId={goal.id} focusRef={habitRef} />
       </BottomSheet>
     </div>
   );

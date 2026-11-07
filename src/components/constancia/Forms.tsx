@@ -139,10 +139,12 @@ export function TaskForm({
 
 export function HabitForm({
   onDone,
+  fixedGoalId,
   focusRef,
   habit,
 }: {
   onDone: () => void;
+  fixedGoalId?: string;
   habit?: Habit;
   focusRef?: React.RefObject<HTMLInputElement | null>;
 }) {
@@ -152,7 +154,7 @@ export function HabitForm({
   const [title, setTitle] = useState(habit?.title ?? "");
   const [frequency, setFrequency] = useState<"daily" | "specific">(habit?.frequency ?? "daily");
   const [days, setDays] = useState<number[]>(habit?.days ?? []);
-  const [goalId, setGoalId] = useState(habit?.goalId ?? "");
+  const [goalId, setGoalId] = useState(habit?.goalId ?? fixedGoalId ?? "");
   const [titleError, setTitleError] = useState("");
   const [daysError, setDaysError] = useState("");
 
@@ -170,7 +172,7 @@ export function HabitForm({
       return;
     }
     if (dErr) return;
-    const input = { title, frequency, days, goalId };
+    const input = { title, frequency, days, goalId: fixedGoalId ?? goalId };
     const done = () => {
       setTitle("");
       setDays([]);
@@ -249,7 +251,7 @@ export function HabitForm({
           <FieldError id="habit-days-error">{daysError}</FieldError>
         </fieldset>
       )}
-      <GoalSelect id="habit-goal" value={goalId} onChange={setGoalId} />
+      {!fixedGoalId && <GoalSelect id="habit-goal" value={goalId} onChange={setGoalId} />}
       <Button type="submit" size="lg" className="w-full">
         {habit ? "Guardar cambios" : "Guardar"}
       </Button>
