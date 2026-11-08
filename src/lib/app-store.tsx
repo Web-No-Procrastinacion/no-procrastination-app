@@ -304,9 +304,13 @@ export function AppProvider({ children }: { children: ReactNode }) {
       return { ...d, habits: d.habits.map(h => {
         if (h.id !== id) return h;
         const days = input.frequency === "daily" ? [] : [...input.days].sort((a, b) => a - b);
-        const changed = h.frequency !== input.frequency || h.days.join(",") !== days.join(",");
-        return { ...h, title: input.title.trim(), goalId: input.goalId || undefined, frequency: input.frequency, days,
-          scheduleHistory: changed ? revisedHabitSchedule(h, input.frequency, days, localDayOf(now(), d.timezone)) : h.scheduleHistory };
+        const currentDay = localDayOf(now(), d.timezone);
+        const next = { ...h, frequency: input.frequency, days };
+        // Also revise when today should be scheduled but a pending revision (saved under the old tomorrow-only rule) still excludes it.
+        const changed = h.frequency !== input.frequency || h.days.join(",") !== days.join(",")
+          || isHabitScheduled({ ...next, scheduleHistory: undefined }, currentDay) !== isHabitScheduled(h, currentDay);
+        return { ...next, title: input.title.trim(), goalId: input.goalId || undefined,
+          scheduleHistory: changed ? revisedHabitSchedule(h, input.frequency, days, currentDay) : h.scheduleHistory };
       }) };
     }, onSuccess);
   }, [commit, now]);
