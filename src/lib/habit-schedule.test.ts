@@ -35,4 +35,19 @@ describe("Vigencia de la frecuencia", () => {
     expect(isHabitScheduled(second, "2026-11-10")).toBe(false);
     expect(isHabitScheduled(second, "2026-11-11")).toBe(true);
   });
+  it("aplica desde hoy si la nueva frecuencia incluye hoy, sin cambiar días pasados", () => {
+    const habit: Habit = { id: "h", title: "Leer", createdAt: "2026-01-01T00:00:00Z", frequency: "specific", days: [0, 1, 2, 3, 4] };
+    const revised = { ...habit, days: [0, 1, 2, 3, 4, 5], scheduleHistory: revisedHabitSchedule(habit, "specific", [0, 1, 2, 3, 4, 5], "2026-11-07") };
+    expect(isHabitScheduled(revised, "2026-11-07")).toBe(true);
+    expect(isHabitScheduled(revised, "2026-10-31")).toBe(false);
+    expect(isHabitScheduled(revised, "2026-11-09")).toBe(true);
+  });
+  it("si primero quita hoy y luego lo vuelve a agregar el mismo día, hoy sigue programado", () => {
+    const habit: Habit = { id: "h", title: "Leer", createdAt: "2026-01-01T00:00:00Z", frequency: "daily", days: [] };
+    const removed = { ...habit, frequency: "specific" as const, days: [0], scheduleHistory: revisedHabitSchedule(habit, "specific", [0], "2026-11-07") };
+    const readded = { ...removed, days: [0, 5], scheduleHistory: revisedHabitSchedule(removed, "specific", [0, 5], "2026-11-07") };
+    expect(isHabitScheduled(readded, "2026-11-07")).toBe(true);
+    expect(isHabitScheduled(readded, "2026-11-08")).toBe(false);
+    expect(isHabitScheduled(readded, "2026-11-14")).toBe(true);
+  });
 });

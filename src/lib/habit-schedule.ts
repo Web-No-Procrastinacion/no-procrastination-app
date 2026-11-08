@@ -1,4 +1,4 @@
-import { addDays, weekdayNames } from "./dates";
+import { addDays, weekdayIndex, weekdayNames } from "./dates";
 import type { Habit, HabitSchedule } from "./types";
 
 export function habitScheduleOn(habit: Habit, day: string): Pick<Habit, "frequency" | "days"> {
@@ -8,7 +8,9 @@ export function habitScheduleOn(habit: Habit, day: string): Pick<Habit, "frequen
 }
 
 export function revisedHabitSchedule(habit: Habit, frequency: Habit["frequency"], days: number[], today: string): HabitSchedule[] {
-  const effectiveFrom = addDays(today, 1);
+  // Removing today waits until tomorrow so today's completion and points stay valid; adding today applies now.
+  const includesToday = frequency === "daily" || days.includes(weekdayIndex(today));
+  const effectiveFrom = includesToday ? today : addDays(today, 1);
   const previous = habit.scheduleHistory ?? [{ frequency: habit.frequency, days: [...habit.days], effectiveFrom: "" }];
   return [...previous.filter(s => s.effectiveFrom < effectiveFrom), {
     frequency, days: frequency === "daily" ? [] : [...days].sort((a, b) => a - b), effectiveFrom,

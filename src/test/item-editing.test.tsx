@@ -186,18 +186,17 @@ describe("Edición compartida", () => {
     expect(user().completions).toEqual(fixture().completions);
   });
 
-  it("agregar hoy no programa hoy; desde mañana usa la nueva frecuencia y sobrevive recarga", async () => {
+  it("agregar hoy programa el hábito desde hoy, lo deja completar y sobrevive recarga", async () => {
     await open("habits"); fireEvent.click(screen.getByRole("button", { name: "Biblioteca" }));
     fireEvent.click(dialog().getByLabelText("Diaria")); save(); await closed();
-    expect(isHabitScheduled(habit("off"), today)).toBe(false);
+    expect(isHabitScheduled(habit("off"), today)).toBe(true);
     expect(isHabitScheduled(habit("off"), "2026-11-06")).toBe(true);
+    expect(isHabitScheduled(habit("off"), "2026-11-04")).toBe(false);
     fireEvent.click(screen.getByText("Vista Hoy"));
-    expect(screen.queryByRole("button", { name: "Biblioteca" })).not.toBeInTheDocument();
-    fireEvent.click(screen.getByText("Avanzar al día siguiente"));
     expect(screen.getByRole("button", { name: "Biblioteca" })).toBeVisible();
     const persisted = user(); cleanup();
     await open("habits", persisted);
-    expect(isHabitScheduled(habit("off"), today)).toBe(false);
+    expect(isHabitScheduled(habit("off"), today)).toBe(true);
   });
 
   it.each(["Leer", "Estudiar"])("valida título obligatorio al editar %s", async name => {
